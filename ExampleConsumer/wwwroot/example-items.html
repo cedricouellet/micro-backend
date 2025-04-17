@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <title>Example Items</title>
+</head>
+<body>
+    <h1>Example Items</h1>
+    <br />
+
+    <a href="/index.html">Back to Home</a>
+    <br />
+
+    <div>
+        <div>Ajax HTTP Post is functional!</div>
+
+        <div>
+            <input id="name-ajax" value="" placeholder="New item name" />
+            <button onclick="addExampleItem()">Ajax Add</button>
+        </div>
+    </div>
+    <br />
+
+    <div>
+        <div>Form HTTP Post is functional!</div>
+
+        <form method="post" action="/example-items">
+            <input name="name" value="" placeholder="New item name" />
+            <button type="submit">Form Submit</button>
+        </form>
+    </div>
+    <br />
+
+    <div id="example-form-result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+        console.log("JavaScript is functional!");
+
+        getExampleItems();
+
+        function getExampleItems() {
+            axios.post('/example-items/partial')
+                .then((response) => {
+                    document.getElementById("example-form-result").innerHTML = response.data;
+                })
+                .catch((error) => {
+                    alert(error.response?.data?.error || error);
+                });
+        }
+
+        function showExampleItemDetails(id) {
+            axios.get(`/api/example-items/${id}/details`)
+                .then((response) => {
+                    const data = response.data;
+                    alert(`ID: ${data.id}\nName: ${data.name}\nCreated At (UTC): ${data.createdAtUtc}\nRandom Number: ${data.randomNumber}`);
+                })
+                .catch((error) => {
+                    alert(error.response?.data?.error || error);
+                });
+        }
+
+        function removeExampleItem(id) {
+            axios.delete(`/api/example-items/${id}`)
+                .then((response) => {
+                    getExampleItems();
+                })
+                .catch((error) => {
+                    alert(error.response?.data?.error || error);
+                });
+        }
+
+        function addExampleItem() {
+            const name = document.getElementById("name-ajax");
+
+            axios.post('/api/example-items', {
+                name: name.value,
+            })
+                .then((response) => {
+                    name.value = '';
+                    getExampleItems();
+                })
+                .catch((error) => {
+                    alert(error.response?.data?.error || error);
+                });
+        };
+    </script>
+</body>
+</html>
